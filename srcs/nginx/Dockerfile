@@ -1,6 +1,6 @@
 FROM nginx:alpine
 
-MAINTAINER Joscelyn Cueille (jcueille@student.42.fr)
+LABEL maintainer="jcueille@student.42.fr"
 
 RUN apk add --update openssh
 COPY SSH.sh /SSH.sh

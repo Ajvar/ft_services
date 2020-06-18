@@ -18,8 +18,9 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: ftps
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: ft_services
@@ -27,11 +28,11 @@ spec:
     metadata:
       labels:
         app: ft_services
-        tier: nginx
+        tier: ftps
     spec:
       containers:
-      - name: nginx
-        image: 42nginx:v1
+      - name: ftps
+        image: 42ftps:v1
         imagePullPolicy: Never
         ports:
-        - containerPort: 80
+        - containerPort: 21
