@@ -1,5 +1,15 @@
 #!/bin/sh
 
+red="\e[1;91m"
+green="\e[1;92m"
+yellow="\e[1;93m"
+dblue="\e[1;94m"
+purple="\e[1;95m"
+blue="\e[1;96m"
+eoc="\e[0m"
+underlined="\e[4m"
+# ----- STARTING MINIKUBE ----- #
+printf "${green}----- STARTING MINIKUBE -----${eoc}\n"
 if ! which docker >/dev/null 2>&1 ||
     ! which minikube >/dev/null 2>&1
 then
@@ -14,16 +24,30 @@ then
             echo "Minikube can't start"
             exit 1
         fi
-minikube addons enable ingress
 fi
-#kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
-#kubectl apply -f srcs/dashboard-admin-user.yaml
-#kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}') | grep "token:" |cut -d " " -f 7 > srcs/token
+printf "${green}OK${eoc}\n"
+# ----- INSTALLING METALLB ----- #
+printf "${green}----- INSTALLING METAL LB -----${eoc}\n"
+# see what changes would be made, returns nonzero returncode if different
+kubectl get configmap kube-proxy -n kube-system -o yaml | \
+sed -e "s/strictARP: false/strictARP: true/" | \
+kubectl diff -f - -n kube-system
+
+# actually apply the changes, returns nonzero returncode on errors only
+kubectl get configmap kube-proxy -n kube-system -o yaml | \
+sed -e "s/strictARP: false/strictARP: true/" | \
+kubectl apply -f - -n kube-system
+
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
+# On first install only
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+kubectl apply -f srcs/metallb-configmap.yaml
+
 eval $(minikube docker-env)
 docker build -t 42nginx:v1 srcs/nginx/
 docker build -t 42ftps:v1 srcs/ftps/
 kubectl apply -f nginx.yaml
-kubectl apply -f ingress.yaml
 kubectl apply -f ftps.yaml
 
-minikube dashboard
+minikube dashboard &
