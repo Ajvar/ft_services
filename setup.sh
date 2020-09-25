@@ -45,9 +45,9 @@ kubectl create secret generic -n metallb-system memberlist --from-literal=secret
 kubectl apply -f srcs/metallb-configmap.yaml
 
 eval $(minikube docker-env)
-docker build -t 42nginx:v1 srcs/nginx/
+docker build srcs/nginx -t 42nginx:v1 
 docker build -t 42ftps:v1 srcs/ftps/
-kubectl apply -f nginx.yaml
+kubectl apply -f srcs/nginx.yaml
 kubectl apply -f ftps.yaml
 
 minikube dashboard &

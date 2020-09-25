@@ -9,4 +9,4 @@ echo "user:password = $SSH_USER:$SSH_PASSWORD"
 
 ssh-keygen -A
 
-supervisord
+supervisord -c /etc/supervisord.conf

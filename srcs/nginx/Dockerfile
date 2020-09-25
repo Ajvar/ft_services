@@ -3,18 +3,15 @@ FROM nginx:alpine
 LABEL maintainer="jcueille@student.42.fr"
 
 EXPOSE 80 443 22
-RUN apk update
-RUN apk add --update openssh
-RUN apk add openrc --no-cache
-RUN apk add openssl
-RUN apk add supervisor
+RUN apk update && apk add openssl supervisor vim openrc --no-cache && apk add --update openssh
 
-RUN openssl req -nodes -newkey rsa:2048 -keyout /etc/ssl/private/nginx-key.key -out /etc/ssl/certs/nginx-cert.crt -subj "/C=FR/ST=PARIS/L=PARIS/O=42/OU=STUDENT/CN=jcueille"
-RUN mkdir /var/log/supervisord
+RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/ssl/private/nginx-key.key -out /etc/ssl/certs/nginx-cert.crt -subj "/C=FR/ST=PARIS/L=PARIS/O=42/OU=STUDENT/CN=jcueille"
+RUN mkdir -p /var/log/supervisord /var/www/localhost/htdocs/
 COPY SSH.sh /SSH.sh
-COPY ./config.conf /etc/nginx
+COPY index.html /var/www/localhost/htdocs
+COPY ./config.conf /etc/nginx/nginx.conf
 COPY ./supervisord.conf /etc/supervisord.conf
 
-#ENTRYPOINT sh /SSH.sh
-ENTRYPOINT sh
+ENTRYPOINT sh /SSH.sh
+#ENTRYPOINT sh
 

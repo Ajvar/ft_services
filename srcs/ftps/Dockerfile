@@ -2,6 +2,7 @@ FROM alpine
 
 LABEL maintainer="jcueille@student.42.fr"
 
+EXPOSE 22
 RUN printf '@testing http://nl.alpinelinux.org/alpine/edge/testing' >> /etc/apk/repositories \
 RUN apk update
 RUN apk add pure-ftpd@testing
