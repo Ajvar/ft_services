@@ -19,7 +19,7 @@ fi
 
 if ! minikube status >/dev/null 2>&1
 then
-    if ! minikube start
+    if ! minikube start --driver=docker
         then
             echo "Minikube can't start"
             exit 1
