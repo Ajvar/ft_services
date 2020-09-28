@@ -5,28 +5,32 @@ metadata:
   labels:
     app: ft_services
 spec:
+  type: LoadBalancer
   selector:
     app: ft_services
     tier: nginx
-spec:
   ports:
   - name: http
     port: 80
-    targetPort: 80
+    #targetPort: 80
   - name: https
     port: 443
-    targetPort: 443
+    #targetPort: 443
   - name: ssh
     port: 22
-    targetPort: 22
-  type: LoadBalancer
+    #targetPort: 22
 
 ---
+
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: nginx
+  labels:
+    app: ft_services
 spec:
+  serviceName: nginx
+  replicas: 2
   selector:
     matchLabels:
       app: ft_services
@@ -34,13 +38,35 @@ spec:
     metadata:
       labels:
         app: ft_services
-        tier: nginx
     spec:
       containers:
       - name: nginx
         image: 42nginx:v1
         imagePullPolicy: Never
-        terminationMessagePath: "/tmp/my-log"
         ports:
         - containerPort: 80
+
+#apiVersion: apps/v1
+#kind: Deployment
+#metadata:
+#  name: nginx
+#  labels:
+#    app: ft_services
+#spec:
+#  selector:
+#    matchLabels:
+#      app: ft_services
+#  template:
+#    metadata:
+#      labels:
+#        app: ft_services
+#        tier: nginx
+#    spec:
+#      containers:
+#      - name: nginx
+#        image: 42nginx:v1
+#        imagePullPolicy: Never
+#        terminationMessagePath: "/tmp/my-log"
+#        ports:
+#        - containerPort: 80
         

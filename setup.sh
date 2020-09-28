@@ -25,6 +25,7 @@ then
             exit 1
         fi
 fi
+service nginx stop
 printf "${green}OK${eoc}\n"
 # ----- INSTALLING METALLB ----- #
 printf "${green}----- INSTALLING METAL LB -----${eoc}\n"
