@@ -1,12 +1,10 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
-[ -z "$SSH_USER" ] && SSH_USER=admin
-[ -z "$SSH_PASSWORD" ] && SSH_PASSWORD=admin
+export user=username;
+export user_pass=;
 
-adduser -D "$SSH_USER"
-echo "$SSH_USER:$SSH_PASSWORD" | chpasswd
-echo "user:password = $SSH_USER:$SSH_PASSWORD"
-
+adduser -D ${user};
+echo "$user:$user_pass" | chpasswd
 ssh-keygen -A
-
 supervisord -c /etc/supervisord.conf
+tail -f /dev/null

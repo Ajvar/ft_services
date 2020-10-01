@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env zsh
+
+kubectl delete --all deployment svc pods statefulset pvc pv secret 1>&2
+rm -rf /tmp/k8s_pvc 1>&2
 
 red="\e[1;91m"
 green="\e[1;92m"
@@ -8,24 +11,34 @@ purple="\e[1;95m"
 blue="\e[1;96m"
 eoc="\e[0m"
 underlined="\e[4m"
+if [[ "$OSTYPE" != "linux-gnu" ]]; then
+	echo "only works on linux OS.\nExiting."
+	exit 1
+fi
+if ! groups | grep "docker" >/dev/null 1>&2; then
+	echo "Please do : sudo usermod -aG docker user42; newgrp docker"
+	exit 1
+fi
+if ! which conntrack >/dev/null 1>&2; then
+	sudo apt-get install conntrack
+fi
 # ----- STARTING MINIKUBE ----- #
 printf "${green}----- STARTING MINIKUBE -----${eoc}\n"
-if ! which docker >/dev/null 2>&1 ||
-    ! which minikube >/dev/null 2>&1
-then
-    echo "Please install Docker and Minikube"
-    exit 1
+if ! which docker >/dev/null 2>&1; then
+	./docker_install.sh
+fi
+if ! which minikube >/dev/null 2>&1; then
+	./kube_install.sh
 fi
 
-if ! minikube status >/dev/null 2>&1
-then
-    if ! minikube start --driver=docker
-        then
+if ! minikube status >/dev/null 2>&1; then
+	service nginx stop
+    if ! sudo minikube start --driver=none; then
             echo "Minikube can't start"
             exit 1
         fi
 fi
-service nginx stop
+sudo chown -R user42 $HOME/.kube $HOME/.minikube
 printf "${green}OK${eoc}\n"
 # ----- INSTALLING METALLB ----- #
 printf "${green}----- INSTALLING METAL LB -----${eoc}\n"
@@ -43,12 +56,12 @@ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manife
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
 # On first install only
 kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-kubectl apply -f srcs/metallb-configmap.yaml
+kubectl delete -f ./srcs/metallb-configmap.yaml;kubectl apply -f srcs/metallb-configmap.yaml
 
-eval $(minikube docker-env)
-docker build srcs/nginx -t 42nginx:v1 
-docker build -t 42ftps:v1 srcs/ftps/
+#eval $(minikube docker-env)
+docker build srcs/nginx -t 42nginx 
+docker build -t 42ftps srcs/ftps/
 kubectl apply -f srcs/nginx.yaml
-kubectl apply -f ftps.yaml
+kubectl apply -f srcs/ftps.yaml
 
-minikube dashboard &
+sudo minikube dashboard &
