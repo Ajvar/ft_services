@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 
-kubectl delete --all deployment svc pods statefulset pvc pv secret 1>&2
-rm -rf /tmp/k8s_pvc 1>&2
+#kubectl delete --all deployment svc pods statefulset pvc pv secret 1>&2
+#rm -rf /tmp/k8s_pvc 1>&2
 
 red="\e[1;91m"
 green="\e[1;92m"
@@ -27,6 +27,7 @@ printf "${green}----- STARTING MINIKUBE -----${eoc}\n"
 if ! which docker >/dev/null 2>&1; then
 	./docker_install.sh
 fi
+systemctl enable docker.service
 if ! which minikube >/dev/null 2>&1; then
 	./kube_install.sh
 fi
