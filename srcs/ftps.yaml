@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: ftps
-        image: 42ftps:v1
+        image: 42ftps
         imagePullPolicy: Never
         ports:
         - containerPort: 21
