@@ -1,3 +1,15 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ftp-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -8,18 +20,20 @@ spec:
   selector:
     app: ft_services
     tier: ftps
-spec:
   ports:
   - name: ftp
     port: 21
+  - name: ftp-data
+    port: 30000
   type: LoadBalancer
 
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: ftps
 spec:
+  serviceName: ftps
   replicas: 1
   selector:
     matchLabels:
@@ -30,9 +44,17 @@ spec:
         app: ft_services
         tier: ftps
     spec:
+      volumes:
+        - name: ftp-storage
+          persistentVolumeClaim:
+            claimName: ftp-claim
       containers:
       - name: ftps
         image: 42ftps
         imagePullPolicy: Never
+        volumeMounts:
+        - mountPath: "/home/pureftpd"
+          name: ftp-storage
         ports:
         - containerPort: 21
+        - containerPort: 30000

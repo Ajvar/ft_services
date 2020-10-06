@@ -11,35 +11,44 @@ purple="\e[1;95m"
 blue="\e[1;96m"
 eoc="\e[0m"
 underlined="\e[4m"
+printf "${green}----- OS CHECK -----${eoc}\n"
 if [[ "$OSTYPE" != "linux-gnu" ]]; then
 	echo "only works on linux OS.\nExiting."
 	exit 1
 fi
+printf "${green}----- GROUP CHECK -----${eoc}\n"
 if ! groups | grep "docker" >/dev/null 1>&2; then
 	echo "Please do : sudo usermod -aG docker user42; newgrp docker"
 	exit 1
 fi
+printf "${green}----- CONNTRACK CHECK -----${eoc}\n"
 if ! which conntrack >/dev/null 1>&2; then
 	sudo apt-get install conntrack
 fi
 # ----- STARTING MINIKUBE ----- #
 printf "${green}----- STARTING MINIKUBE -----${eoc}\n"
+printf "${green}----- CHECK DOCKER -----${eoc}\n"
 if ! which docker >/dev/null 2>&1; then
 	./docker_install.sh
 fi
+printf "${green}----- START DOCKER SVC -----${eoc}\n"
 systemctl enable docker.service
+printf "${green}----- CHECK MINIKUBE -----${eoc}\n"
 if ! which minikube >/dev/null 2>&1; then
 	./kube_install.sh
 fi
 
 if ! minikube status >/dev/null 2>&1; then
+	printf "${green}----- STOP NGINX -----${eoc}\n"
 	service nginx stop
+	printf "${green}----- START KUBE -----${eoc}\n"
     if ! sudo minikube start --driver=none; then
             echo "Minikube can't start"
             exit 1
         fi
 fi
-sudo chown -R user42 $HOME/.kube $HOME/.minikube
+printf "${green}----- CHOWN -----${eoc}\n"
+#sudo chown -R user42 $HOME/.kube $HOME/.minikube
 printf "${green}OK${eoc}\n"
 # ----- INSTALLING METALLB ----- #
 printf "${green}----- INSTALLING METAL LB -----${eoc}\n"
@@ -58,8 +67,7 @@ kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manife
 # On first install only
 kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 kubectl delete -f ./srcs/metallb-configmap.yaml;kubectl apply -f srcs/metallb-configmap.yaml
-
-#eval $(minikube docker-env)
+printf "${green}----- BUILD IMAGES -----${eoc}\n"
 docker build srcs/nginx -t 42nginx 
 docker build -t 42ftps srcs/ftps/
 kubectl apply -f srcs/nginx.yaml
