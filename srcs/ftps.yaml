@@ -17,6 +17,7 @@ metadata:
   labels:
     app: ft_services
 spec:
+  loadBalancerIP: 192.168.99.101
   selector:
     app: ft_services
     tier: ftps
