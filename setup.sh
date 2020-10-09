@@ -32,7 +32,9 @@ if ! which docker >/dev/null 2>&1; then
 	./docker_install.sh
 fi
 printf "${green}----- START DOCKER SVC -----${eoc}\n"
-systemctl enable docker.service
+if ! pgrep -x docker >/dev/null; then
+    systemctl start docker
+fi
 printf "${green}----- CHECK MINIKUBE -----${eoc}\n"
 if ! which minikube >/dev/null 2>&1; then
 	./kube_install.sh
@@ -40,8 +42,10 @@ fi
 
 if ! minikube status >/dev/null 2>&1; then
 	printf "${green}----- STOP NGINX -----${eoc}\n"
-	service nginx stop
-	printf "${green}----- START KUBE -----${eoc}\n"
+	if pgrep -x nginx >/dev/null; then
+        service nginx stop
+    fi
+    printf "${green}----- START KUBE -----${eoc}\n"
     if ! sudo minikube start --driver=none; then
             echo "Minikube can't start"
             exit 1
