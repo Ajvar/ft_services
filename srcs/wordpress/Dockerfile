@@ -5,7 +5,7 @@ LABEL maintainer="jcueille@student.42.fr"
 WORKDIR /tmp
 
 EXPOSE 5050
-RUN echo http://pkg.example.com/alpine/v3.11/community >> /etc/apk/repositories
+#RUN echo http://pkg.example.com/alpine/v3.11/community >> /etc/apk/repositories
 RUN apk update
 RUN apk add openssl
 RUN apk add supervisor
@@ -14,7 +14,7 @@ RUN apk add nginx php7-common php7-iconv php7-json php7-gd php7-curl php7-xml ph
 RUN adduser -D -g 'www' www
 RUN mkdir /www
 RUN chown -R www:www /var/lib/nginx
-RUN chown -R www:www /wwwi
+RUN chown -R www:www /www
 RUN mkdir -p /usr/share/webapps/
 RUN cd /usr/share/webapps/
 RUN wget http://wordpress.org/latest.tar.gz
@@ -22,12 +22,13 @@ RUN tar -xzvf latest.tar.gz
 RUN rm latest.tar.gz
 RUN chown -R www /usr/share/webapps/
 RUN ln -s /usr/share/webapps/wordpress/ /var/www/localhost/htdocs/wordpress
-RUN RUN openssl req -x509 -nodes -newkey rsa:2048 \
+RUN openssl req -x509 -nodes -newkey rsa:2048 \
     -keyout /etc/ssl/private/nginx.key \
     -out /etc/ssl/certs/nginx.crt \
     -subj "/C=FR/ST=PARIS/L=PARIS/O=42/OU=STUDENT/CN=jcueille"
-COPY nginx.conf /etc/nginx/nginx.conf
+RUN mkdir -p /run/nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY entrypoint.sh /tmp
 
-ENTRYPOINT ./entrypoint.sh
+#ENTRYPOINT ./entrypoint.sh
 
