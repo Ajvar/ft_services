@@ -3,7 +3,7 @@ FROM alpine
 LABEL maintainer="jcueille@student.42.fr"
 
 WORKDIR /tmp
-
+ARG IP
 EXPOSE 5050
 #RUN echo http://pkg.example.com/alpine/v3.11/community >> /etc/apk/repositories
 RUN apk update
@@ -34,6 +34,8 @@ COPY entrypoint.sh /tmp
 COPY supervisord.conf /etc/supervisord.conf
 RUN mkdir /var/log/supervisord
 COPY wp-config.php /usr/share/webapps/wordpress
+RUN touch IP.txt
+RUN echo ${IP} > IP.txt
 #ENTRYPOINT nginx -g "daemon off;" &
 #ENTRYPOINT supervisord
 

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./wordpressdb-init.sh
+#./wp-init.sh
