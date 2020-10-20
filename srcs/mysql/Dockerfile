@@ -10,6 +10,9 @@ RUN mkdir -p /var/log/supervisord
 COPY entrypoint.sh /entrypoint.sh
 COPY supervisord.conf /etc/supervisord.conf
 COPY wp-init.sh /wp-init.sh
-
-#ENTRYPOINT ./entrypoint.sh
+RUN mkdir -p /run/openrc
+RUN touch /run/openrc/softlevel
+RUN apk add openrc
+RUN rc-service mariadb setup
+ENTRYPOINT ./entrypoint.sh
 
