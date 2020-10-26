@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 
 # Wait that mysql was up
 #until mysql

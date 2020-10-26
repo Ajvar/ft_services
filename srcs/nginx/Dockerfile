@@ -1,4 +1,4 @@
-FROM alpine:3.12.0
+FROM alpine
 
 LABEL maintainer="jcueille@student.42.fr"
 

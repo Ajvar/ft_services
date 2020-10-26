@@ -15,5 +15,5 @@ COPY my.cnf /etc/my.cnf
 COPY wp-init.sh /wp-init.sh
 COPY supervisord.conf /etc/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
-#ENTRYPOINT ./entrypoint.sh
+ENTRYPOINT ./entrypoint.sh
 

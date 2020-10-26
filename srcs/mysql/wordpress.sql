@@ -442,7 +442,9 @@ CREATE TABLE `wp_users` (
 --
 
 INSERT INTO `wp_users` (`ID`, `user_login`, `user_pass`, `user_nicename`, `user_email`, `user_url`, `user_registered`, `user_activation_key`, `user_status`, `display_name`) VALUES
-(1, 'admin', '$P$BPBV/WbH1Bpkmjj2TBR5Oh7/yxlYLy0', 'admin', 'admin@admin.com', 'http://192.168.99.102:5050', '2020-08-13 08:19:24', '', 0, 'admin');
+(1, 'admin', 'password', 'admin', 'admin@admin.com', 'http://192.168.99.102:5050', '2020-08-13 08:19:24', '', 0, 'admin');
+INSERT INTO `wp_users` (`ID`, `user_login`, `user_pass`, `user_nicename`, `user_email`, `user_url`, `user_registered`, `user_activation_key`, `user_status`, `display_name`) VALUES
+(3, 'user', 'password', 'user', 'user@user.com', 'http://192.168.99.102:5050', '2020-08-13 08:19:24', '', 0, 'user');
 
 --
 -- Index pour les tables déchargées
