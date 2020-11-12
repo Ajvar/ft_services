@@ -8,7 +8,9 @@ spec:
   resources:
     requests:
       storage: 2Gi
-
+  selector:
+    matchLabels: 
+      type: local
 ---
 apiVersion: v1
 kind: Service
@@ -54,8 +56,17 @@ spec:
         image: 42ftps
         imagePullPolicy: Never
         volumeMounts:
-        - mountPath: "/home/pureftpd"
+        - mountPath: "/home/vsftpd"
           name: ftp-storage
         ports:
         - containerPort: 21
         - containerPort: 30000
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "my-storage-class"
+      resources:
+        requests:
+          storage: 1Gi

@@ -35,6 +35,8 @@ RUN mkdir /var/log/supervisord
 COPY wp-config.php /usr/share/webapps/wordpress
 RUN touch IP.txt
 RUN echo ${IP} > IP.txt
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ./entrypoint.sh
 #ENTRYPOINT nginx -g "daemon off;" &
 #ENTRYPOINT supervisord
 
