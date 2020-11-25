@@ -81,8 +81,11 @@ docker build -t 42wordpress --build-arg IP=${IP} srcs/wordpress
 #docker build -t 42mysql --build-arg IP=${IP} srcs/mysql
 #docker build -t 42phpmyadmin --build-arg IP=${IP} srcs/phpmyadmin
 
+mkdir /tmp/data
+sudo kubectl apply -f srcs/volume.yaml
 sudo kubectl apply -f srcs/nginx.yaml
 sudo kubectl apply -f srcs/ftps.yaml
 sudo kubectl apply -f srcs/wordpress.yaml
+sudo kubectl apply -f srcs/mysql.yaml
 
  sudo minikube dashboard &
