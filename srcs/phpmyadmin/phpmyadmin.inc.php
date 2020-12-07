@@ -36,10 +36,11 @@ $cfg['Servers'][$i]['AllowNoPassword'] = true;
 /**
  * Variable definition
  */
-$cfg['Servers'][$i]['host'] = "mysql";
+$cfg['Servers'][$i]['host'] = "192.168.99.103";
 $cfg['Servers'][$i]['port'] = "3306";
 $cfg['Servers'][$i]['user'] = "user";
 $cfg['Servers'][$i]['password'] = "password";
+$cfg['Servers'][$i]['host'] = "/var/lib/mysql/mysql.sock";
 
 $cfg['UploadDir'] = '';
 $cfg['SaveDir'] = '';
