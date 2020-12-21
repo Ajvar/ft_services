@@ -81,6 +81,13 @@ docker build -t 42wordpress --build-arg IP=${IP} srcs/wordpress
 docker build -t 42mysql --build-arg IP=${IP} srcs/mysql
 docker build -t 42phpmyadmin --build-arg IP=${IP} srcs/phpmyadmin
 
+DB_NAME=wordpress; DB_USER=user; DB_PASSWORD=password; DB_HOST=mysql;
+kubectl create secret generic db-id \
+	--from-literal=name=${DB_NAME} \
+	--from-literal=user=${DB_USER} \
+	--from-literal=password=${DB_PASSWORD} \
+	--from-literal=host=${DB_HOST}
+
 sudo kubectl apply -f srcs/volume.yaml
 sudo kubectl apply -f srcs/nginx.yaml
 sudo kubectl apply -f srcs/ftps.yaml
