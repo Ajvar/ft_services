@@ -14,10 +14,12 @@ RUN apk add telegraf --repository http://dl-3.alpinelinux.org/alpine/edge/commun
 RUN mkdir /etc/telegraf
 COPY telegraf.conf /etc/telegraf
 COPY entrypoint.sh /tmp
-COPY supervisord.conf /etc/supervisord.conf
 RUN mkdir /var/log/supervisord
+RUN mkdir /etc/influxdb
 RUN touch IP.txt
 RUN echo ${IP} > IP.txt
 RUN chmod +x entrypoint.sh
+COPY influxdb.conf /etc/influxdb/influxdb.conf
+COPY supervisord.conf /etc/supervisord.conf
 ENTRYPOINT ./entrypoint.sh
 
