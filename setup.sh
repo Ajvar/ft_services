@@ -75,11 +75,13 @@ sudo kubectl delete -f ./srcs/metallb-configmap.yaml;sudo kubectl apply -f srcs/
 
 IP=$( sudo kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
 printf "${green}----- BUILD IMAGES -----${eoc}\n"
+docker build -t 42influxdb srcs/influxdb
 docker build -t 42nginx --build-arg IP=${IP} srcs/nginx
 docker build -t 42ftps srcs/ftps
 docker build -t 42wordpress --build-arg IP=${IP} srcs/wordpress
 docker build -t 42mysql --build-arg IP=${IP} srcs/mysql
 docker build -t 42phpmyadmin --build-arg IP=${IP} srcs/phpmyadmin
+docker build -t 42grafana srcs/grafana
 
 DB_NAME=wordpress; DB_USER=user; DB_PASSWORD=password; DB_HOST=mysql;
 kubectl create secret generic db-id \
@@ -89,11 +91,13 @@ kubectl create secret generic db-id \
 	--from-literal=host=${DB_HOST}
 
 sudo kubectl apply -f srcs/volume.yaml
+sudo kubectl apply -f srcs/influxdb.yaml
 sudo kubectl apply -f srcs/nginx.yaml
 sudo kubectl apply -f srcs/ftps.yaml
 sudo kubectl apply -f srcs/wordpress.yaml
 sudo kubectl apply -f srcs/mysql.yaml
 sudo kubectl apply -f srcs/phpmyadmin.yaml
+#sudo kubectl apply -f srcs/grafana.yaml
 
 
  sudo minikube dashboard &

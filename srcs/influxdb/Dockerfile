@@ -19,7 +19,7 @@ RUN mkdir /etc/influxdb
 RUN touch IP.txt
 RUN echo ${IP} > IP.txt
 RUN chmod +x entrypoint.sh
-COPY influxdb.conf /etc/influxdb/influxdb.conf
+#COPY influxdb.conf /etc/influxdb/influxdb.conf
 COPY supervisord.conf /etc/supervisord.conf
 ENTRYPOINT ./entrypoint.sh
 
