@@ -41,27 +41,4 @@ spec:
         ports:
         - containerPort: 80
 
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: nginx
-#  labels:
-#    app: ft_services
-#spec:
-#  selector:
-#    matchLabels:
-#      app: ft_services
-#  template:
-#    metadata:
-#      labels:
-#        app: ft_services
-#        tier: nginx
-#    spec:
-#      containers:
-#      - name: nginx
-#        image: 42nginx:v1
-#        imagePullPolicy: Never
-#        terminationMessagePath: "/tmp/my-log"
-#        ports:
-#        - containerPort: 80
         

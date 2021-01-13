@@ -13,7 +13,7 @@ RUN mkdir -p /var/log/supervisord /run/openrc
 RUN touch /run/openrc/softlevel
 #RUN rc-service mariadb setup
 RUN mkdir /etc/telegraf
-COPY ../telegraf.conf /etc/telegraf
+COPY telegraf.conf /etc/telegraf.conf
 COPY wordpress.sql /wordpress.sql
 VOLUME [ "/sys/fs/cgroup" ]
 COPY my.cnf /etc/my.cnf

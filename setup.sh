@@ -71,7 +71,7 @@ sudo kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/m
 sudo kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
 # On first install only
 sudo kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-sudo kubectl delete -f ./srcs/metallb-configmap.yaml;sudo kubectl apply -f srcs/metallb-configmap.yaml
+sudo kubectl delete -f ./srcs/yamls/metallb-configmap.yaml;sudo kubectl apply -f srcs/yamls/metallb-configmap.yaml
 
 IP=$( sudo kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
 printf "${green}----- BUILD IMAGES -----${eoc}\n"
@@ -90,14 +90,21 @@ kubectl create secret generic db-id \
 	--from-literal=password=${DB_PASSWORD} \
 	--from-literal=host=${DB_HOST}
 
-sudo kubectl apply -f srcs/volume.yaml
-sudo kubectl apply -f srcs/influxdb.yaml
-sudo kubectl apply -f srcs/nginx.yaml
-sudo kubectl apply -f srcs/ftps.yaml
-sudo kubectl apply -f srcs/wordpress.yaml
-sudo kubectl apply -f srcs/mysql.yaml
-sudo kubectl apply -f srcs/phpmyadmin.yaml
-#sudo kubectl apply -f srcs/grafana.yaml
+kubectl create secret generic influxdb-creds \
+  --from-literal=INFLUXDB_DATABASE=telegraf-db \
+  --from-literal=INFLUXDB_USERNAME=admin \
+  --from-literal=INFLUXDB_PASSWORD=password \
+  --from-literal=INFLUXDB_HOST=influxdb
+
+  
+sudo kubectl apply -f srcs/yamls/volume.yaml
+sudo kubectl apply -f srcs/yamls/influxdb.yaml
+sudo kubectl apply -f srcs/yamls/nginx.yaml
+sudo kubectl apply -f srcs/yamls/ftps.yaml
+sudo kubectl apply -f srcs/yamls/wordpress.yaml
+sudo kubectl apply -f srcs/yamls/mysql.yaml
+sudo kubectl apply -f srcs/yamls/phpmyadmin.yaml
+sudo kubectl apply -f srcs/yamls/grafana.yaml
 
 
  sudo minikube dashboard &

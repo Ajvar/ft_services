@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: ftp-claim
+  name: ftp-pvc
 spec:
   accessModes:
     - ReadWriteOnce
@@ -50,7 +50,7 @@ spec:
       volumes:
         - name: ftp-storage
           persistentVolumeClaim:
-            claimName: ftp-claim
+            claimName: ftp-pvc
       containers:
       - name: ftps
         image: 42ftps

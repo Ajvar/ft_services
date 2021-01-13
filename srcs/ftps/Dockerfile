@@ -18,7 +18,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
     -subj "/C=FR/ST=PARIS/L=PARIS/O=42/OU=STUDENT/CN=jcueille"
 
 RUN mkdir /etc/telegraf
-COPY ../telegraf.conf /etc/telegraf
+COPY telegraf.conf /etc/telegraf.conf
 COPY supervisord.conf /etc/supervisord.conf
 COPY entrypoint.sh /entrypoint.sh
 COPY vsftpd.conf /etc/vsftpd/vsftpd.conf

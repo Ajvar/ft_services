@@ -29,7 +29,7 @@ RUN openssl req -x509 -nodes -newkey rsa:2048 \
     -subj "/C=FR/ST=PARIS/L=PARIS/O=42/OU=STUDENT/CN=jcueille"
 RUN mkdir -p /run/nginx
 RUN mkdir /etc/telegraf
-COPY ../telegraf.conf /etc/telegraf
+COPY telegraf.conf /etc/telegraf.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY entrypoint.sh /tmp
 COPY supervisord.conf /etc/supervisord.conf

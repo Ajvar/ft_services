@@ -1,42 +1,38 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: phpmyadmin
+  name: grafana
   labels:
     app: ft_services
 spec:
+  type: LoadBalancer
   selector:
     app: ft_services
-    tier: phpmyadmin
-
   ports:
-  - name: phpmyadmin
-    port: 5000
-  type: LoadBalancer
-
+  - name: grafana
+    port: 3000
 ---
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: phpmyadmin
+  name: grafana
 spec:
-  serviceName: phpmyadmin
+  serviceName: grafana
   replicas: 1
   selector:
     matchLabels:
       app: ft_services
-      tier: phpmyadmin
-  
+      tier: grafana
   template:
     metadata:
       labels:
         app: ft_services
-        tier: phpmyadmin
-    
+        tier: grafana
     spec:
       containers:
-      - name: phpmyadmin
-        image: 42phpmyadmin
+      - name: grafana
+        image: 42grafana
         imagePullPolicy: Never
         ports:
-        - containerPort: 5000
+        - containerPort: 3000
