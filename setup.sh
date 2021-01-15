@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-#sudo kubectl delete --all deployment svc pods statefulset pvc 1>&2
+#sudo kubectl delete --all deployment svc pods statefulset pvc pv 1>&2
 
 red="\e[1;91m"
 green="\e[1;92m"
@@ -22,7 +22,7 @@ if ! groups | grep "docker" >/dev/null 1>&2; then
 fi
 printf "${green}----- CONNTRACK CHECK -----${eoc}\n"
 if ! which conntrack >/dev/null 1>&2; then
-	 apt-get install conntrack
+	sudo  apt-get install -y conntrack
 fi
 # ----- STARTING MINIKUBE ----- #
 printf "${green}----- STARTING MINIKUBE -----${eoc}\n"
@@ -73,16 +73,6 @@ sudo kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/m
 sudo kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
 sudo kubectl delete -f ./srcs/yamls/metallb-configmap.yaml;sudo kubectl apply -f srcs/yamls/metallb-configmap.yaml
 
-IP=$( sudo kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
-printf "${green}----- BUILD IMAGES -----${eoc}\n"
-docker build -t 42influxdb srcs/influxdb
-docker build -t 42nginx --build-arg IP=${IP} srcs/nginx
-docker build -t 42ftps srcs/ftps
-docker build -t 42wordpress --build-arg IP=${IP} srcs/wordpress
-docker build -t 42mysql --build-arg IP=${IP} srcs/mysql
-docker build -t 42phpmyadmin --build-arg IP=${IP} srcs/phpmyadmin
-docker build -t 42grafana srcs/grafana
-
 DB_NAME=wordpress; DB_USER=user; DB_PASSWORD=password; DB_HOST=mysql;
 kubectl create secret generic db-id \
 	--from-literal=name=${DB_NAME} \
@@ -92,19 +82,30 @@ kubectl create secret generic db-id \
 
 kubectl create secret generic influxdb-creds \
   --from-literal=INFLUXDB_DATABASE=telegraf-db \
-  --from-literal=INFLUXDB_USERNAME=admin \
-  --from-literal=INFLUXDB_PASSWORD=password \
+  --from-literal=INFLUXDB_USERNAME=${DB_USER} \
+  --from-literal=INFLUXDB_PASSWORD=${DB_PASSWORD} \
   --from-literal=INFLUXDB_HOST=influxdb
 
-  
+IP=$( sudo kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
+printf "${green}----- BUILD IMAGES -----${eoc}\n"
+docker build -t 42influxdb srcs/influxdb
+docker build -t 42phpmyadmin --build-arg IP=${IP} srcs/phpmyadmin
+docker build -t 42wordpress --build-arg IP=${IP} srcs/wordpress
+docker build -t 42ftps srcs/ftps
+docker build -t 42mysql --build-arg IP=${IP} srcs/mysql
+docker build -t 42grafana srcs/grafana
+
+WPIP=$( kub get svc wordpress | cut -d " " -f 10 )
+PHPIP=$( kub get svc phpmyadmin | cut -d " " -f 10)
 sudo kubectl apply -f srcs/yamls/volume.yaml
 sudo kubectl apply -f srcs/yamls/influxdb.yaml
-sudo kubectl apply -f srcs/yamls/nginx.yaml
-sudo kubectl apply -f srcs/yamls/ftps.yaml
-sudo kubectl apply -f srcs/yamls/wordpress.yaml
 sudo kubectl apply -f srcs/yamls/mysql.yaml
 sudo kubectl apply -f srcs/yamls/phpmyadmin.yaml
+sudo kubectl apply -f srcs/yamls/wordpress.yaml
+docker build -t 42nginx --build-arg WPIP=${WPIP} --build-arg PHPIP=${PHPIP} srcs/nginx
+sudo kubectl apply -f srcs/yamls/ftps.yaml
+sudo kubectl apply -f srcs/yamls/nginx.yaml
 sudo kubectl apply -f srcs/yamls/grafana.yaml
 
 
- sudo minikube dashboard &
+sudo minikube dashboard &
