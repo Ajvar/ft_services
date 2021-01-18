@@ -2,7 +2,14 @@ FROM alpine
 
 LABEL maintainer="jcueille@student.42.fr"
 
+ARG WPIP
+ARG PHPIP
+
 EXPOSE 80 443 22
+
+RUN echo ${WPIP} >> wpip.txt
+RUN echo ${PHPIP} >> phpip.txt
+
 RUN apk update
 RUN apk add nginx openssl supervisor
 RUN apk add --update openssh-server
@@ -22,6 +29,5 @@ COPY ./config.conf /etc/nginx/nginx.conf
 COPY ./supervisord.conf /etc/supervisord.conf
 
 VOLUME [ "/sys/fs/cgroup" ]
-RUN chmod +x ./entrypoint.sh
 ENTRYPOINT ./entrypoint.sh
 

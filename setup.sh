@@ -95,8 +95,8 @@ docker build -t 42ftps srcs/ftps
 docker build -t 42mysql --build-arg IP=${IP} srcs/mysql
 docker build -t 42grafana srcs/grafana
 
-WPIP=$( kub get svc wordpress | cut -d " " -f 10 )
-PHPIP=$( kub get svc phpmyadmin | cut -d " " -f 10)
+WPIP=$( sudo kubectl get svc wordpress | cut -d " " -f 10 )
+PHPIP=$( sudo kubectl get svc phpmyadmin | cut -d " " -f 10 | cut -d $'\n' -f2)
 sudo kubectl apply -f srcs/yamls/volume.yaml
 sudo kubectl apply -f srcs/yamls/influxdb.yaml
 sudo kubectl apply -f srcs/yamls/mysql.yaml
@@ -109,3 +109,4 @@ sudo kubectl apply -f srcs/yamls/grafana.yaml
 
 
 sudo minikube dashboard &
+
