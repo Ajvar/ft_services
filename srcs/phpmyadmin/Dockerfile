@@ -14,7 +14,7 @@ RUN apk update && apk add --no-cache nginx supervisor \
 RUN apk add telegraf --repository http://dl-3.alpinelinux.org/alpine/edge/community \
     --allow-untrusted --no-cache
 
-RUN mkdir -p /run/nginx/ # Or nginx won't work...
+RUN mkdir -p /run/nginx/
 COPY ./telegraf.conf /etc/telegraf.conf
 # Install PhpMyAdmin
 ARG VERSION="phpMyAdmin-5.0.2-all-languages"

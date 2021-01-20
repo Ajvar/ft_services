@@ -24,7 +24,7 @@ spec:
       - envFrom:
         env:
         - name: IP
-          value: ${EXTERNAL_IP}
+          value: 10.0.2.15
         image: 42grafana
         imagePullPolicy: Never
         name: grafana
@@ -48,7 +48,7 @@ metadata:
     app: ft_services
 spec:
   type: LoadBalancer
-  loadBalancerIP: ${EXTERNAL_IP}
+  loadBalancerIP: 10.0.2.15
   selector:
     app: grafana
   ports:

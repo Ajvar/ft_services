@@ -14,7 +14,7 @@ spec:
   - name: wordpress
     port: 5050
   type: LoadBalancer
-  loadBalancerIP: ${EXTERNAL_IP}
+  loadBalancerIP: 10.0.2.15
 
 ---
 apiVersion: apps/v1
@@ -39,7 +39,7 @@ spec:
         image: 42wordpress
         env:
         - name: IP
-          value: ${EXTERNAL_IP}
+          value: 10.0.2.15
         imagePullPolicy: Never
         ports:
         - containerPort: 5050

@@ -1,7 +1,9 @@
-kubectl delete --all deploy
-kubectl delete --all statefulset
-kubectl delete --all svc
-kubectl delete --all nodes
-kubectl delete --all pods
-kubectl delete --all namespacekub delete pvc --all
-kub delete pv --all
+kub delete --all deploy
+kub delete --all statefulset
+kub delete --all svc
+kub delete --all nodes
+kub delete --all pods
+kub delete --all namespace
+kub delete --all pvc
+kub delete --all pv 
+kub delete --all secrets

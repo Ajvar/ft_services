@@ -8,6 +8,7 @@ metadata:
     app: ft_services
 spec:
   type: LoadBalancer
+  loadBalancerIP: ${EXTERNAL_IP}
   selector:
     app: ft_services
   ports:
@@ -38,6 +39,9 @@ spec:
     spec:
       containers:
       - name: nginx
+        env:
+        - name: IP
+          value: ${EXTERNAL_IP}
         image: 42nginx
         imagePullPolicy: Never
         ports:

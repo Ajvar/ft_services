@@ -22,7 +22,7 @@ metadata:
     app: ft_services
 spec:
   type: LoadBalancer
-  loadBalancerIP: ${EXTERNAL_IP}
+  loadBalancerIP: 10.0.2.15
   selector:
     app: ft_services
     tier: ftps
@@ -66,4 +66,4 @@ spec:
         - containerPort: 30000
         env:
         - name: IP
-          value: ${EXTERNAL_IP}
+          value: 10.0.2.15

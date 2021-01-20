@@ -8,7 +8,7 @@ metadata:
     app: ft_services
 spec:
   type: LoadBalancer
-  loadBalancerIP: ${EXTERNAL_IP}
+  loadBalancerIP: 10.0.2.15
   ports:
     - name: phpmyadmin
       port: 5000
@@ -39,7 +39,7 @@ spec:
         imagePullPolicy: Never
         env:
         - name: IP
-          value: ${EXTERNAL_IP}
+          value: 10.0.2.15
         - name: DB_NAME
           valueFrom:
             secretKeyRef:

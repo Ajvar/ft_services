@@ -1,46 +1,50 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: wordpress
+  name: nginx
   annotations:
     metallb.universe.tf/allow-shared-ip: "sharing key"
   labels:
     app: ft_services
 spec:
+  type: LoadBalancer
+  loadBalancerIP: 10.0.2.15
   selector:
     app: ft_services
-    tier: wordpress
   ports:
-  - name: wordpress
-    port: 5050
-  type: LoadBalancer
-  loadBalancerIP: ${EXTERNAL_IP}
-
+  - name: http
+    port: 80
+  - name: https
+    port: 443
+  - name: ssh
+    port: 22
 ---
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: wordpress
+  name: nginx
 spec:
-  serviceName: wordpress
+  serviceName: nginx
   replicas: 1
   selector:
     matchLabels:
       app: ft_services
-      tier: wordpress
+      tier: nginx
   template:
     metadata:
       labels:
         app: ft_services
-        tier: wordpress
+        tier: nginx
     spec:
       containers:
-      - name: wordpress
-        image: 42wordpress
+      - name: nginx
         env:
         - name: IP
-          value: ${EXTERNAL_IP}
+          value: 10.0.2.15
+        image: 42nginx
         imagePullPolicy: Never
         ports:
-        - containerPort: 5050
+        - containerPort: 80
 
+        

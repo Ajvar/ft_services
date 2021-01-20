@@ -3,7 +3,7 @@ FROM alpine
 LABEL maintainer="jcueille@student.42.fr"
 
 WORKDIR /tmp
-ARG IP
+#ARG IP
 EXPOSE 5050
 RUN apk update
 RUN apk add openssl supervisor
@@ -35,8 +35,8 @@ COPY entrypoint.sh /tmp
 COPY supervisord.conf /etc/supervisord.conf
 RUN mkdir /var/log/supervisord
 COPY wp-config.php /usr/share/webapps/wordpress
-RUN touch IP.txt
-RUN echo ${IP} > IP.txt
+#RUN touch IP.txt
+#RUN echo ${IP} > IP.txt
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ./entrypoint.sh
 

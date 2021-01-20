@@ -1,6 +1,8 @@
 #!/bin/sh
 
-[ -z "$FTPS_USER" ] && FTPS_USER=admin
+sed -i s/__EXTERNAL_IP__/$IP/g /etc/vsftpd/vsftpd.conf
+
+[ -z "$FTPS_USER" ] && FTPS_USER=user
 [ -z "$FTPS_PASS" ] && FTPS_PASS=password
 
 adduser -D "$FTPS_USER" -h /mnt/ftp

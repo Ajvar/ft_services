@@ -10,6 +10,7 @@ purple="\e[1;95m"
 blue="\e[1;96m"
 eoc="\e[0m"
 underlined="\e[4m"
+sudo apt-get install -y moreutils
 printf "${green}----- OS CHECK -----${eoc}\n"
 if [[ "$OSTYPE" != "linux-gnu" ]]; then
 	echo "only works on linux OS.\nExiting."
@@ -71,7 +72,7 @@ sudo kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/m
 sudo kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.3/manifests/metallb.yaml
 # On first install only
 sudo kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-sudo kubectl delete -f ./srcs/yamls/metallb-configmap.yaml;sudo kubectl apply -f srcs/yamls/metallb-configmap.yaml
+
 
 DB_NAME=wordpress; DB_USER=user; DB_PASSWORD=password; DB_HOST=mysql;
 kubectl create secret generic db-id \
@@ -86,26 +87,36 @@ kubectl create secret generic influxdb-creds \
   --from-literal=INFLUXDB_PASSWORD=${DB_PASSWORD} \
   --from-literal=INFLUXDB_HOST=influxdb
 
-IP=$( sudo kubectl get node -o=custom-columns='DATA:status.addresses[0].address' | sed -n 2p)
+export EXTERNAL_IP=`minikube ip`
+
+envsubst '$EXTERNAL_IP' < srcs/yamls/nginx.yaml					> srcs/yamls/modified-yamls/nginx.yaml
+envsubst '$EXTERNAL_IP' < srcs/yamls/phpmyadmin.yaml			> srcs/yamls/modified-yamls/phpmyadmin.yaml
+envsubst '$EXTERNAL_IP' < srcs/yamls/wordpress.yaml				> srcs/yamls/modified-yamls/wordpress.yaml
+envsubst '$EXTERNAL_IP' < srcs/yamls/metallb-configmap.yaml		> srcs/yamls/modified-yamls/metallb-configmap.yaml
+envsubst '$EXTERNAL_IP' < srcs/yamls/ftps.yaml					> srcs/yamls/modified-yamls/ftps.yaml
+envsubst '$EXTERNAL_IP' < srcs/yamls/grafana.yaml				> srcs/yamls/modified-yamls/grafana.yaml
+
 printf "${green}----- BUILD IMAGES -----${eoc}\n"
+
 docker build -t 42influxdb srcs/influxdb
-docker build -t 42phpmyadmin --build-arg IP=${IP} srcs/phpmyadmin
-docker build -t 42wordpress --build-arg IP=${IP} srcs/wordpress
+docker build -t 42mysql srcs/mysql
+docker build -t 42phpmyadmin srcs/phpmyadmin
+docker build -t 42wordpress srcs/wordpress
+docker build -t 42nginx srcs/nginx
 docker build -t 42ftps srcs/ftps
-docker build -t 42mysql --build-arg IP=${IP} srcs/mysql
 docker build -t 42grafana srcs/grafana
 
-WPIP=$( sudo kubectl get svc wordpress | cut -d " " -f 10 )
-PHPIP=$( sudo kubectl get svc phpmyadmin | cut -d " " -f 10 | cut -d $'\n' -f2)
+#WPIP=$( sudo kubectl get svc wordpress | cut -d " " -f 10 )
+#P HPIP=$( sudo kubectl get svc phpmyadmin | cut -d " " -f 10 | cut -d $'\n' -f2)
+sudo kubectl delete -f srcs/yamls/modified-yamls/metallb-configmap.yaml;sudo kubectl apply -f srcs/yamls/modified-yamls/metallb-configmap.yaml
 sudo kubectl apply -f srcs/yamls/volume.yaml
 sudo kubectl apply -f srcs/yamls/influxdb.yaml
 sudo kubectl apply -f srcs/yamls/mysql.yaml
-sudo kubectl apply -f srcs/yamls/phpmyadmin.yaml
-sudo kubectl apply -f srcs/yamls/wordpress.yaml
-docker build -t 42nginx --build-arg WPIP=${WPIP} --build-arg PHPIP=${PHPIP} srcs/nginx
-sudo kubectl apply -f srcs/yamls/ftps.yaml
-sudo kubectl apply -f srcs/yamls/nginx.yaml
-sudo kubectl apply -f srcs/yamls/grafana.yaml
+sudo kubectl apply -f srcs/yamls/modified-yamls/phpmyadmin.yaml
+sudo kubectl apply -f srcs/yamls/modified-yamls/wordpress.yaml
+sudo kubectl apply -f srcs/yamls/modified-yamls/ftps.yaml
+sudo kubectl apply -f srcs/yamls/modified-yamls/nginx.yaml
+sudo kubectl apply -f srcs/yamls/modified-yamls/grafana.yaml
 
 
 sudo minikube dashboard &

@@ -9,4 +9,4 @@ data:
     - name: default
       protocol: layer2
       addresses:
-      - ${EXTERNAL_IP}/32
+      - 10.0.2.15/32

@@ -2,13 +2,8 @@ FROM alpine
 
 LABEL maintainer="jcueille@student.42.fr"
 
-ARG WPIP
-ARG PHPIP
 
 EXPOSE 80 443 22
-
-RUN echo ${WPIP} >> wpip.txt
-RUN echo ${PHPIP} >> phpip.txt
 
 RUN apk update
 RUN apk add nginx openssl supervisor
@@ -25,8 +20,9 @@ COPY ./telegraf.conf /etc/telegraf.conf
 COPY entrypoint.sh /entrypoint.sh
 COPY sshd_config /etc/ssh
 COPY index.html /var/www/localhost/htdocs
-COPY ./config.conf /etc/nginx/nginx.conf
 COPY ./supervisord.conf /etc/supervisord.conf
+COPY ./config.conf  /etc/nginx/conf.d/default.conf
+#COPY ./config.conf /etc/nginx/nginx.conf
 
 VOLUME [ "/sys/fs/cgroup" ]
 ENTRYPOINT ./entrypoint.sh
