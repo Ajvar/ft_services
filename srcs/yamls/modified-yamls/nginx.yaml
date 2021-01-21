@@ -1,50 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: 42nginx
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+          name: http-port
+        - containerPort: 443
+          name: https-port
+        env:
+        - name: IP
+          value: 10.0.2.15
+
+---
+  
 apiVersion: v1
 kind: Service
 metadata:
   name: nginx
   annotations:
     metallb.universe.tf/allow-shared-ip: "sharing key"
-  labels:
-    app: ft_services
 spec:
+  selector:
+    app: nginx
   type: LoadBalancer
   loadBalancerIP: 10.0.2.15
-  selector:
-    app: ft_services
   ports:
-  - name: http
-    port: 80
-  - name: https
-    port: 443
-  - name: ssh
-    port: 22
----
-
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: nginx
-spec:
-  serviceName: nginx
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ft_services
-      tier: nginx
-  template:
-    metadata:
-      labels:
-        app: ft_services
-        tier: nginx
-    spec:
-      containers:
-      - name: nginx
-        env:
-        - name: IP
-          value: 10.0.2.15
-        image: 42nginx
-        imagePullPolicy: Never
-        ports:
-        - containerPort: 80
-
-        
+  - port: 80
+    name: http-port
+    targetPort: 80
+    protocol: TCP
+  - port: 443
+    name: https-port
+    targetPort: 443
+    protocol: TCP    

@@ -13,6 +13,7 @@ spec:
   ports:
   - name: wordpress
     port: 5050
+    targetPort: 5050
   type: LoadBalancer
   loadBalancerIP: ${EXTERNAL_IP}
 

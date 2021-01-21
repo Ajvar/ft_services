@@ -88,7 +88,7 @@ kubectl create secret generic influxdb-creds \
   --from-literal=INFLUXDB_HOST=influxdb
 
 export EXTERNAL_IP=`minikube ip`
-
+sudo rm -rf srcs/yamls/modified-yamls/*.yaml
 envsubst '$EXTERNAL_IP' < srcs/yamls/nginx.yaml					> srcs/yamls/modified-yamls/nginx.yaml
 envsubst '$EXTERNAL_IP' < srcs/yamls/phpmyadmin.yaml			> srcs/yamls/modified-yamls/phpmyadmin.yaml
 envsubst '$EXTERNAL_IP' < srcs/yamls/wordpress.yaml				> srcs/yamls/modified-yamls/wordpress.yaml
