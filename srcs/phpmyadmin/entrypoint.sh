@@ -5,5 +5,4 @@
 #sed s/__DB_HOST__/$DB_HOST/g /var/www/phpmyadmin/config.inc.php -i
 sed s/localhost/$DB_HOST/g /var/www/phpmyadmin/config.sample.inc.php > /var/www/phpmyadmin/config.inc.php
 echo "\$cfg['PmaAbsoluteUri'] = './';" >> /var/www/phpmyadmin/config.inc.php
-
 supervisord
