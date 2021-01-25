@@ -1,23 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "sharing key"
+  labels:
+    app: ft_services
+spec:
+  type: LoadBalancer
+  loadBalancerIP: ${EXTERNAL_IP}
+  ports:
+    - name: phpmyadmin
+      port: 5000
+      targetPort: 5000
+  selector:
+    app: ft_services
+---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: phpmyadmin
   labels:
-    app: phpmyadmin
+    app: ft_services
 spec:
+  serviceName: phpmyadmin
+  replicas: 1
   selector:
     matchLabels:
-      app: phpmyadmin
+      app: ft_services
   template:
     metadata:
       labels:
-        app: phpmyadmin
+        app: ft_services
     spec:
       containers:
       - name: phpmyadmin
         image: 42phpmyadmin
         imagePullPolicy: Never
         env:
+        - name: IP
+          value: ${EXTERNAL_IP}
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
@@ -40,21 +62,4 @@ spec:
               key: host
         ports:
         - containerPort: 5000
-
----
-  
-apiVersion: v1
-kind: Service
-metadata:
-  name: phpmyadmin
-  annotations:
-    metallb.universe.tf/allow-shared-ip: "sharing key"
-spec:
-  selector:
-    app: phpmyadmin
-  type: LoadBalancer
-  loadBalancerIP: ${EXTERNAL_IP}
-  ports:
-  - port: 5000
-    targetPort: 5000
-    protocol: TCP
+          name: phpmyadmin
