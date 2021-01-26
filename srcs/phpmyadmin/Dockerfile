@@ -3,7 +3,7 @@ FROM alpine
 WORKDIR /tmp/
 
 # Prerequisites
-RUN apk update && apk add --no-cache nginx supervisor \
+RUN apk update && apk add --no-cache nginx openssl supervisor \
 	php7-fpm php7-mcrypt php7-session php7-soap php7-openssl php7-gmp \
 	php7-pdo_odbc php7-json php7-dom php7-pdo php7-zip php7-mysqli \
 	php7-sqlite3 php7-apcu php7-pdo_pgsql php7-bcmath php7-gd php7-odbc \
@@ -13,18 +13,19 @@ RUN apk update && apk add --no-cache nginx supervisor \
 	fcgi php7-posix php7-ldap php7-mbstring
 RUN apk add telegraf --repository http://dl-3.alpinelinux.org/alpine/edge/community \
     --allow-untrusted --no-cache
+RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/ssl/private/nginx-key.key -out /etc/ssl/certs/nginx-cert.crt -subj "/C=FR/ST=PARIS/L=PARIS/O=42/OU=STUDENT/CN=jcueille"
 
-RUN mkdir -p /run/nginx/ # Or nginx won't work...
+RUN mkdir -p /run/nginx/
 COPY ./telegraf.conf /etc/telegraf.conf
 # Install PhpMyAdmin
-ARG VERSION="phpMyAdmin-5.0.2-all-languages"
+ARG VERSION="phpMyAdmin-5.0.4-all-languages"
 RUN wget http://files.directadmin.com/services/all/phpMyAdmin/${VERSION}.tar.gz && \
 	tar -xf ${VERSION}.tar.gz && \
 	mv ${VERSION} /var/www/phpmyadmin && \
 	rm -rf ${VERSION}
 
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./pma_config.php /var/www/phpmyadmin/config.inc.php
+#COPY ./pma_config.php /var/www/phpmyadmin/config.inc.php
 
 EXPOSE 5000
 

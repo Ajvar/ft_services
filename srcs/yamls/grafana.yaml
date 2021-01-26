@@ -22,6 +22,9 @@ spec:
     spec:
       containers:
       - envFrom:
+        env:
+        - name: IP
+          value: ${EXTERNAL_IP}
         image: 42grafana
         imagePullPolicy: Never
         name: grafana
@@ -33,14 +36,19 @@ spec:
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: grafana
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "sharing key"
   labels:
     app: ft_services
 spec:
+  type: LoadBalancer
+  loadBalancerIP: ${EXTERNAL_IP}
   selector:
     app: grafana
   ports:
@@ -48,4 +56,3 @@ spec:
     protocol: TCP
     port: 3000
     targetPort: 3000
-  type: LoadBalancer
