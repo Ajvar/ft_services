@@ -95,7 +95,7 @@ envsubst '$EXTERNAL_IP' < srcs/yamls/wordpress.yaml				> srcs/yamls/modified-yam
 envsubst '$EXTERNAL_IP' < srcs/yamls/metallb-configmap.yaml		> srcs/yamls/modified-yamls/metallb-configmap.yaml
 envsubst '$EXTERNAL_IP' < srcs/yamls/ftps.yaml					> srcs/yamls/modified-yamls/ftps.yaml
 envsubst '$EXTERNAL_IP' < srcs/yamls/grafana.yaml				> srcs/yamls/modified-yamls/grafana.yaml
-
+#envsubst '$EXTERNAL_IP' < srcs/yamls/mysql.yaml				> srcs/yamls/modified-yamls/mysql.yaml
 printf "${green}----- BUILD IMAGES -----${eoc}\n"
 
 docker build -t 42influxdb srcs/influxdb

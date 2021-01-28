@@ -37,7 +37,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "telegraf-db",
+      "datasource": "nginx-db",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -109,13 +109,6 @@
                 "type": "mean"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "nginx-0"
-            }
           ]
         }
       ],
@@ -165,7 +158,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "telegraf-db",
+      "datasource": "nginx-db",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -237,13 +230,6 @@
                 "type": "count"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "nginx-0"
-            }
           ]
         }
       ],
@@ -293,7 +279,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "telegraf-db",
+      "datasource": "nginx-db",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -365,13 +351,6 @@
                 "type": "mean"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "nginx-0"
-            }
           ]
         },
         {
@@ -407,13 +386,6 @@
                 "type": "mean"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "nginx-0"
-            }
           ]
         },
         {
@@ -449,13 +421,6 @@
                 "type": "mean"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "nginx-0"
-            }
           ]
         }
       ],
@@ -519,7 +484,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "telegraf-db",
+      "datasource": "nginx-db",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -607,13 +572,6 @@
                 "type": "mean"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "nginx-0"
-            }
           ]
         },
         {
@@ -649,13 +607,6 @@
                 "type": "mean"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "nginx-0"
-            }
           ]
         }
       ],
@@ -701,7 +652,7 @@
       }
     },
     {
-      "datasource": "telegraf-db",
+      "datasource": "nginx-db",
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -778,13 +729,6 @@
                 "type": "mean"
               }
             ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=",
-              "value": "nginx-0"
-            }
           ]
         }
       ],
