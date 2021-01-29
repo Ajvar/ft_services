@@ -2,7 +2,6 @@ FROM alpine
 
 LABEL maintainer="jcueille@student.42.fr"
 
-
 EXPOSE 80 443 22
 
 RUN apk update
@@ -16,13 +15,11 @@ RUN apk add telegraf --repository http://dl-3.alpinelinux.org/alpine/edge/commun
 
 RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/ssl/private/nginx-key.key -out /etc/ssl/certs/nginx-cert.crt -subj "/C=FR/ST=PARIS/L=PARIS/O=42/OU=STUDENT/CN=jcueille"
 RUN mkdir -p /var/log/supervisord /var/www/html/ /run/nginx
-#COPY ./telegraf.conf /etc/telegraf.conf
 COPY entrypoint.sh /entrypoint.sh
 COPY sshd_config /etc/ssh
 COPY index.html /var/www/html/index.html
 COPY ./supervisord.conf /etc/supervisord.conf
-COPY ./config.conf  /etc/nginx/conf.d/default.conf
-#COPY ./config.conf /etc/nginx/nginx.conf
+COPY ./nginx.conf  /etc/nginx/conf.d/default.conf
 
 VOLUME [ "/sys/fs/cgroup" ]
 ENTRYPOINT ./entrypoint.sh
