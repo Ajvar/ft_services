@@ -13,6 +13,8 @@ COPY entrypoint.sh ./entrypoint.sh
 COPY supervisord.conf /etc/supervisord.conf
 COPY config.ini /usr/share/grafana/conf/custom.ini
 COPY ./influxdb.yaml /usr/share/grafana/conf/provisioning/datasources/
+COPY ./nginx.yaml /usr/share/grafana/conf/provisioning/datasources/
+COPY ./phpmyadmin.yaml /usr/share/grafana/conf/provisioning/datasources/
 COPY ./dashboard.yaml /usr/share/grafana/conf/provisioning/dashboards/
 COPY ./dashboards /var/lib/grafana/dashboards/
 #COPY grafana.db /usr/share/grafana/data/grafana.db

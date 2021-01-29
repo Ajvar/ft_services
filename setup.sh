@@ -1,68 +1,50 @@
 #!/usr/bin/env zsh
 
-#sudo kubectl delete --all deployment svc pods statefulset pvc pv 1>&2
-
-red="\e[1;91m"
 green="\e[1;92m"
-yellow="\e[1;93m"
-dblue="\e[1;94m"
-purple="\e[1;95m"
-blue="\e[1;96m"
 eoc="\e[0m"
-underlined="\e[4m"
-sudo apt-get install -y moreutils
-printf "${green}----- OS CHECK -----${eoc}\n"
+
+printf "${green}----- CHECKING DEPENDENCIES -----${eoc}\n"
+#Checks if running on Linux
 if [[ "$OSTYPE" != "linux-gnu" ]]; then
 	echo "only works on linux OS.\nExiting."
 	exit 1
 fi
-printf "${green}----- GROUP CHECK -----${eoc}\n"
+#Checks if user present on docker group
 if ! groups | grep "docker" >/dev/null 1>&2; then
 	echo "Please do : sudo usermod -aG docker user42; newgrp docker"
 	exit 1
 fi
-printf "${green}----- CONNTRACK CHECK -----${eoc}\n"
+
+#Checks if conntrack is installed
 if ! which conntrack >/dev/null 1>&2; then
 	sudo  apt-get install -y conntrack
 fi
-# ----- STARTING MINIKUBE ----- #
-printf "${green}----- STARTING MINIKUBE -----${eoc}\n"
-printf "${green}----- CHECK DOCKER -----${eoc}\n"
+#Checks if docker is installed, installs it if necessary
 if ! which docker >/dev/null 2>&1; then
 	./docker_install.sh
 fi
-printf "${green}----- START DOCKER SVC -----${eoc}\n"
-if systemctl status nginx | grep 'inactive (dead)' >/dev/null; then
-    systemctl start docker
-fi
-printf "${green}----- CHECK MINIKUBE -----${eoc}\n"
+#Checks if Minikube is installed, installs it if necessary
 if ! which minikube >/dev/null 2>&1; then
 	./kube_install.sh
 fi
-
-if ! minikube status >/dev/null 2>&1; then
-	printf "${green}----- STOP NGINX -----${eoc}\n"
-	if systemctl status nginx | grep 'active (running)' >/dev/null; then
-        service nginx stop
-    fi
-    printf "${green}----- START KUBE -----${eoc}\n"
+# ----- STARTING MINIKUBE ----- #
+printf "${green}----- STARTING MINIKUBE -----${eoc}\n"
 # When using the none driver root is needed, since minikube runs the kubernetes system components directly on your machine.
-    if !  sudo minikube start --driver=none; then
-            echo "Minikube can't start"
-            exit 1
-        fi
+if !  sudo minikube start --driver=none; then
+    echo "Minikube can't start"
+    exit 1
 fi
-printf "${green}----- CHOWN -----${eoc}\n"
+
 sudo mv /home/user42/.kube /home/user42/.minikube $HOME
 sudo chown -R $USER $HOME/.kube $HOME/.minikube
-printf "${green}OK${eoc}\n"
+printf "${green}MINIKUBE LAUNCHED :)${eoc}\n"
 
 # ----- INSTALLING METALLB ----- #
 printf "${green}----- INSTALLING METAL LB -----${eoc}\n"
 # see what changes would be made, returns nonzero returncode if different
- sudo kubectl get configmap kube-proxy -n kube-system -o yaml | \
- sed -e "s/strictARP: false/strictARP: true/" | \
- sudo kubectl diff -f - -n kube-system
+sudo kubectl get configmap kube-proxy -n kube-system -o yaml | \
+sed -e "s/strictARP: false/strictARP: true/" | \
+sudo kubectl diff -f - -n kube-system
 
 # actually apply the changes, returns nonzero returncode on errors only
 sudo kubectl get configmap kube-proxy -n kube-system -o yaml | \
@@ -95,7 +77,6 @@ envsubst '$EXTERNAL_IP' < srcs/yamls/wordpress.yaml				> srcs/yamls/modified-yam
 envsubst '$EXTERNAL_IP' < srcs/yamls/metallb-configmap.yaml		> srcs/yamls/modified-yamls/metallb-configmap.yaml
 envsubst '$EXTERNAL_IP' < srcs/yamls/ftps.yaml					> srcs/yamls/modified-yamls/ftps.yaml
 envsubst '$EXTERNAL_IP' < srcs/yamls/grafana.yaml				> srcs/yamls/modified-yamls/grafana.yaml
-#envsubst '$EXTERNAL_IP' < srcs/yamls/mysql.yaml				> srcs/yamls/modified-yamls/mysql.yaml
 printf "${green}----- BUILD IMAGES -----${eoc}\n"
 
 docker build -t 42influxdb srcs/influxdb
@@ -106,8 +87,6 @@ docker build -t 42nginx srcs/nginx
 docker build -t 42ftps srcs/ftps
 docker build -t 42grafana srcs/grafana
 
-#WPIP=$( sudo kubectl get svc wordpress | cut -d " " -f 10 )
-#P HPIP=$( sudo kubectl get svc phpmyadmin | cut -d " " -f 10 | cut -d $'\n' -f2)
 sudo kubectl delete -f srcs/yamls/modified-yamls/metallb-configmap.yaml;sudo kubectl apply -f srcs/yamls/modified-yamls/metallb-configmap.yaml
 sudo kubectl apply -f srcs/yamls/volume.yaml
 sudo kubectl apply -f srcs/yamls/influxdb.yaml
@@ -117,7 +96,6 @@ sudo kubectl apply -f srcs/yamls/modified-yamls/wordpress.yaml
 sudo kubectl apply -f srcs/yamls/modified-yamls/ftps.yaml
 sudo kubectl apply -f srcs/yamls/modified-yamls/nginx.yaml
 sudo kubectl apply -f srcs/yamls/modified-yamls/grafana.yaml
-
 
 sudo minikube dashboard &
 

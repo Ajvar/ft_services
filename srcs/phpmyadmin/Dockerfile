@@ -16,7 +16,7 @@ RUN apk add telegraf --repository http://dl-3.alpinelinux.org/alpine/edge/commun
 RUN openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/ssl/private/nginx-key.key -out /etc/ssl/certs/nginx-cert.crt -subj "/C=FR/ST=PARIS/L=PARIS/O=42/OU=STUDENT/CN=jcueille"
 
 RUN mkdir -p /run/nginx/
-COPY ./telegraf.conf /etc/telegraf.conf
+#COPY ./telegraf.conf /etc/telegraf.conf
 # Install PhpMyAdmin
 ARG VERSION="phpMyAdmin-5.0.4-all-languages"
 RUN wget http://files.directadmin.com/services/all/phpMyAdmin/${VERSION}.tar.gz && \
